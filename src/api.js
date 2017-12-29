@@ -20,6 +20,6 @@ export default {
 
 	comment: {
 		create: (obj) =>
-			axios.post('/api/comment', { comment: obj.comment, topicId: obj.topic.id, userId: obj.user.id}).then(res => res.data)
+			axios.post('/api/comment', { comment: obj.comment, topicId: obj.topicId, userId: obj.userId}).then(res => res.data)
 	}
 }

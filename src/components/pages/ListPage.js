@@ -25,12 +25,10 @@ class ListPage extends React.Component {
 		});
 	};
 
-	goToTopic = () => {
-		this.props.history.push("/topic");
-	}
-
 	render() {
 		const { topics } = this.state;
+
+		console.log(JSON.stringify(topics));
 
 		return (
 			<div className="ui container">
@@ -58,7 +56,7 @@ class ListPage extends React.Component {
 										</Table.Cell>
 										<Table.Cell singleLine> <Link to={`/topic/${topic.id}`}>{topic.title}</Link> </Table.Cell>
 										<Table.Cell collapsing textAlign='center'>
-											{ topic.comments.length > 0 ? topic.comments.length : 0}
+											{/*{ topic.comments.length > 0 ? topic.comments.length : 0}*/} 0
 										</Table.Cell>
 									</Table.Row>)
 								})}

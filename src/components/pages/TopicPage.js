@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Button, Comment, Form } from 'semantic-ui-react';
+import { Container, Button, Comment, Form} from 'semantic-ui-react';
 import api from "../../api";
 import HeaderTemplate from '../commons/header';
 import { Link } from 'react-router-dom';
@@ -11,7 +11,9 @@ class TopicPage extends React.Component {
 	}
 
 	state = {
-		topic: {},
+		topic: {
+			comments: []
+		},
 		comment: ''
 	};
 
@@ -28,12 +30,13 @@ class TopicPage extends React.Component {
 
 		let commentObj = {};
 		commentObj.comment = comment;
-		commentObj.user = localStorage.getItem('loggeduser');
-		commentObj.topic = topic;
+		commentObj.userId = JSON.parse(localStorage.getItem('loggeduser')).id;
+		commentObj.topicId = this.props.match.params.id;
 
 		console.log('Sending comment to server: ' + JSON.stringify(commentObj));
 		api.comment.create(commentObj).then( () => {
-			topic.comments.push(comment);
+			console.log('Comment created: ' + JSON.stringify(topic));
+			this.loadTopic(this.props.match.params.id);
 		})
 	};
 
