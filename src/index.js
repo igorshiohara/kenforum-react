@@ -9,7 +9,7 @@ import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import rootReducer from './rootReducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import {userLoggedIn} from "./components/actions/auth";
+import {userLoggedIn} from "./actions/auth";
 import {Route} from 'react-router-dom';
 
 const store = createStore(
