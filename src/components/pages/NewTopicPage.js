@@ -2,6 +2,7 @@ import React from 'react';
 import TopicForm from '../forms/TopicForm';
 import api from '../../api';
 import PropTypes from 'prop-types';
+import HeaderTemplate from "../commons/header";
 
 class NewTopicPage extends React.Component {
 
@@ -24,6 +25,7 @@ class NewTopicPage extends React.Component {
 
 		return (
 			<div className="ui container">
+				<HeaderTemplate title="Create new topic" />
 				<TopicForm submit={this.addTopic} topic={topic}/>
 			</div>
 		);

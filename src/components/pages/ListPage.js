@@ -1,63 +1,86 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Image, Table } from 'semantic-ui-react'
+import { Container, Image, Table, Divider } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as actions from '../../actions/auth';
+import api from "../../api";
+import HeaderTemplate from '../commons/header';
 
 class ListPage extends React.Component {
 
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			topics: []
+		};
+
+		this.loadTopics();
+	}
+
+	loadTopics = () => {
+		api.topic.list().then( (data) => {
+			this.setState({topics: data});
+		});
+	};
+
+	goToTopic = () => {
+		this.props.history.push("/topic");
+	}
+
 	render() {
-		const { isAuthenticated, logout  } = this.prop;
+		const { topics } = this.state;
 
 		return (
 			<div className="ui container">
-				<h1>List Page</h1>
-				{isAuthenticated ? <button onClick={() => logout}>Logout</button> : <Link to="/login">Login</Link>}
+
+				<HeaderTemplate title="Forum" />
+
 				<Link to="/new-topic">New Topic</Link>
 
-				<Table singleLine>
-					<Table.Header>
-						<Table.Row>
-							<Table.HeaderCell singleLine>User</Table.HeaderCell>
-							<Table.HeaderCell>Topic</Table.HeaderCell>
-							<Table.HeaderCell>Number of comments</Table.HeaderCell>
-						</Table.Row>
-					</Table.Header>
+				{ topics ?
+					<Table singleLine>
+						<Table.Header>
+							<Table.Row>
+								<Table.HeaderCell singleLine></Table.HeaderCell>
+								<Table.HeaderCell>Topic</Table.HeaderCell>
+								<Table.HeaderCell>Number of comments</Table.HeaderCell>
+							</Table.Row>
+						</Table.Header>
 
-					<Table.Body>
-						<Table.Row>
-							<Table.Cell>
-								<Image src='/assets/images/user.png' size='mini' circular />
-							</Table.Cell>
-							<Table.Cell singleLine>Creatine supplementation is the reference compound for increasing muscular creatine levels; there is
-								variability in this increase, however, with some nonresponders.
-							</Table.Cell>
-							<Table.Cell textAlign='center'>
-								2
-							</Table.Cell>
-						</Table.Row>
-						<Table.Row>
-							<Table.Cell>
-								<Image src='/assets/images/user.png' size='mini' circular />
-							</Table.Cell>
-							<Table.Cell singleLine>Creatine supplementation is the reference compound for increasing muscular creatine levels; there is
-								variability in this increase, however, with some nonresponders.
-							</Table.Cell>
-							<Table.Cell textAlign='center'>
-								6
-							</Table.Cell>
-						</Table.Row>
-					</Table.Body>
-				</Table>
+						<Table.Body>
+							{ topics.map((topic, index) => {
+								return (
+									<Table.Row key={index}>
+										<Table.Cell collapsing>
+											<Image src='/assets/images/user.png' size='mini' circular/>
+										</Table.Cell>
+										<Table.Cell singleLine> <Link to={`/topic/${topic.id}`}>{topic.title}</Link> </Table.Cell>
+										<Table.Cell collapsing textAlign='center'>
+											{ topic.comments.length > 0 ? topic.comments.length : 0}
+										</Table.Cell>
+									</Table.Row>)
+								})}
+						</Table.Body>
+					</Table>
+					:
+					<Container>
+						<Divider horizontal></Divider>
+						<h4>No topics yet</h4>
+					</Container>
+				}
+
+
 			</div>
 		);
 	}
 }
 
 ListPage.propTypes = {
-	isAuthenticated: PropTypes.bool.isRequired,
-	logout: PropTypes.func.isRequired
+	history: PropTypes.shape({
+		push:PropTypes.func.isRequired
+	}).isRequired
 };
 
 function mapStateToProps(state) {

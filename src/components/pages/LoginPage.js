@@ -12,9 +12,8 @@ class LoginPage extends React.Component {
 
 	render() {
 		return (
-			<div className="ui container">
-				<h1>Login Page</h1>
-
+			<div className="login-container">
+				<h2 className="text-center">Sign in</h2>
 				<LoginForm submit={this.submit}/>
 			</div>
 		);

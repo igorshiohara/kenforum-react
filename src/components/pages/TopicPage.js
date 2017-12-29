@@ -1,59 +1,77 @@
 import React from 'react';
-import { Divider, Button, Comment, Form, Header } from 'semantic-ui-react';
+import { Container, Button, Comment, Form } from 'semantic-ui-react';
+import api from "../../api";
+import HeaderTemplate from '../commons/header';
+import { Link } from 'react-router-dom';
 
 class TopicPage extends React.Component {
 
+	componentDidMount() {
+		this.loadTopic(this.props.match.params.id);
+	}
+
+	state = {
+		topic: {},
+		comment: ''
+	};
+
+	loadTopic = (id) => {
+		api.topic.get(id).then( (data) =>
+			this.setState({topic :data})
+		);
+	};
+
+	comment = () => {
+		console.log('Commenting: ' + this.state.comment);
+
+		const { topic, comment } = this.state;
+
+		let commentObj = {};
+		commentObj.comment = comment;
+		commentObj.user = localStorage.getItem('loggeduser');
+		commentObj.topic = topic;
+
+		console.log('Sending comment to server: ' + JSON.stringify(commentObj));
+		api.comment.create(commentObj).then( () => {
+			topic.comments.push(comment);
+		})
+	};
+
+	onChange = e => {
+		this.setState({
+			comment: e.target.value
+		});
+	};
+
 	render() {
+		const { topic } = this.state;
+
 		return (
 			<div className="ui container">
-				<h1>This is a topic</h1>
-				<Divider horizontal></Divider>
+				<HeaderTemplate title={topic.title} />
+
+				<Container textAlign="left">
+					<span>{topic.description}</span>
+				</Container>
 
 				<Comment.Group>
-					<Header as='h3' dividing>Comments</Header>
-
 					<Comment>
 						<Comment.Avatar src='/assets/images/user.png' />
 						<Comment.Content>
 							<Comment.Author as='a'>Matt</Comment.Author>
 							<Comment.Metadata>
-								<div>Today at 5:42PM</div>
+								<div>Just now</div>
 							</Comment.Metadata>
 							<Comment.Text>How artistic!</Comment.Text>
 						</Comment.Content>
 					</Comment>
 
-					<Comment>
-						<Comment.Avatar src='/assets/images/user.png' />
-						<Comment.Content>
-							<Comment.Author as='a'>Elliot Fu</Comment.Author>
-							<Comment.Metadata>
-								<div>Yesterday at 12:30AM</div>
-							</Comment.Metadata>
-							<Comment.Text>
-								<p>This has been very useful for my research. Thanks as well!</p>
-							</Comment.Text>
-						</Comment.Content>
-					</Comment>
-
-					<Comment>
-						<Comment.Avatar src='/assets/images/user.png' />
-						<Comment.Content>
-							<Comment.Author as='a'>Joe Henderson</Comment.Author>
-							<Comment.Metadata>
-								<div>5 days ago</div>
-							</Comment.Metadata>
-							<Comment.Text>
-								Dude, this is awesome. Thanks so much
-							</Comment.Text>
-						</Comment.Content>
-					</Comment>
-
 					<Form reply>
-						<Form.TextArea />
-						<Button content='Add Reply' labelPosition='left' icon='edit' primary />
+						<Form.TextArea onChange={this.onChange}/>
+						<Button onClick={ this.comment } content='Add Reply' labelPosition='left' icon='edit' primary />
 					</Form>
 				</Comment.Group>
+				<Link to="/list">Back to topics</Link>
 			</div>
 		);
 	}

@@ -11,6 +11,15 @@ export default {
 			axios.post('/api/topic', {title: topic.title, description: topic.description, user: topic.user}).then(res => res.data),
 
 		list: () =>
-			axios.get('api/topics').then(res => res.data)
+			axios.get('/api/topics').then(res => res.data),
+
+		get: (id) =>
+			axios.get('/api/topic/' + id).then(res => res.data)
+
+	},
+
+	comment: {
+		create: (obj) =>
+			axios.post('/api/comment', { comment: obj.comment, topicId: obj.topic.id, userId: obj.user.id}).then(res => res.data)
 	}
 }
