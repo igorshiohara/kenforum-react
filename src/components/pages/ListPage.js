@@ -28,8 +28,6 @@ class ListPage extends React.Component {
 	render() {
 		const { topics } = this.state;
 
-		console.log(JSON.stringify(topics));
-
 		return (
 			<div className="ui container">
 
@@ -43,7 +41,6 @@ class ListPage extends React.Component {
 							<Table.Row>
 								<Table.HeaderCell singleLine></Table.HeaderCell>
 								<Table.HeaderCell>Topic</Table.HeaderCell>
-								<Table.HeaderCell>Number of comments</Table.HeaderCell>
 							</Table.Row>
 						</Table.Header>
 
@@ -55,9 +52,6 @@ class ListPage extends React.Component {
 											<Image src='/assets/images/user.png' size='mini' circular/>
 										</Table.Cell>
 										<Table.Cell singleLine> <Link to={`/topic/${topic.id}`}>{topic.title}</Link> </Table.Cell>
-										<Table.Cell collapsing textAlign='center'>
-											{/*{ topic.comments.length > 0 ? topic.comments.length : 0}*/} 0
-										</Table.Cell>
 									</Table.Row>)
 								})}
 						</Table.Body>

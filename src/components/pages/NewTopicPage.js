@@ -15,8 +15,6 @@ class NewTopicPage extends React.Component {
 
 	addTopic = (topic) => {
 		topic.user = localStorage.getItem('loggeduser');
-		console.log(topic);
-
 		api.topic.create(topic).then( () => this.props.history.push("/list"));
 	}
 	

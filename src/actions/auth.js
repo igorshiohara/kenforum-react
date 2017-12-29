@@ -11,7 +11,6 @@ export const userLoggedOut = () => ({
 });
 
 export const login = (credentials) => (dispatch) =>
-	//api.user.login(credentials).then(res => res.data.user);
 	api.user.login(credentials).then(user => {
 		localStorage.loggeduser = JSON.stringify(user);
 		localStorage.kenforumJWT = user.token;

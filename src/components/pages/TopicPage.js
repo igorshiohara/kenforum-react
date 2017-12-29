@@ -1,8 +1,9 @@
 import React from 'react';
-import { Container, Button, Comment, Form} from 'semantic-ui-react';
+import { Container, Button, Comment, Form, Segment} from 'semantic-ui-react';
 import api from "../../api";
 import HeaderTemplate from '../commons/header';
 import { Link } from 'react-router-dom';
+import Moment from 'moment';
 
 class TopicPage extends React.Component {
 
@@ -11,31 +12,32 @@ class TopicPage extends React.Component {
 	}
 
 	state = {
-		topic: {
-			comments: []
-		},
+		topic: {},
 		comment: ''
 	};
 
 	loadTopic = (id) => {
-		api.topic.get(id).then( (data) =>
-			this.setState({topic :data})
-		);
+		api.comment.get(id).then( (comments) => {
+			let newTopic = Object.assign({}, this.state.topic);
+			newTopic.comments = comments;
+			this.setState({topic : newTopic});
+		});
+
+		api.topic.get(id).then( (data) => {
+			this.setState({topic : data});
+		});
+
 	};
 
 	comment = () => {
-		console.log('Commenting: ' + this.state.comment);
-
-		const { topic, comment } = this.state;
+		const { comment } = this.state;
 
 		let commentObj = {};
 		commentObj.comment = comment;
 		commentObj.userId = JSON.parse(localStorage.getItem('loggeduser')).id;
 		commentObj.topicId = this.props.match.params.id;
 
-		console.log('Sending comment to server: ' + JSON.stringify(commentObj));
 		api.comment.create(commentObj).then( () => {
-			console.log('Comment created: ' + JSON.stringify(topic));
 			this.loadTopic(this.props.match.params.id);
 		})
 	};
@@ -58,16 +60,22 @@ class TopicPage extends React.Component {
 				</Container>
 
 				<Comment.Group>
-					<Comment>
-						<Comment.Avatar src='/assets/images/user.png' />
-						<Comment.Content>
-							<Comment.Author as='a'>Matt</Comment.Author>
-							<Comment.Metadata>
-								<div>Just now</div>
-							</Comment.Metadata>
-							<Comment.Text>How artistic!</Comment.Text>
-						</Comment.Content>
-					</Comment>
+					{topic && topic.comments && topic.comments.map( (c, index) => {
+						return (
+							<Segment key={index}>
+								<Comment>
+									<Comment.Avatar src='/assets/images/user.png' />
+									<Comment.Content>
+										<Comment.Author as='a'>{c.user.name}</Comment.Author>
+										<Comment.Metadata>
+											<div>{Moment(c.creationDate).fromNow()}</div>
+										</Comment.Metadata>
+										<Comment.Text>{c.comment}</Comment.Text>
+									</Comment.Content>
+								</Comment>
+							</Segment>
+						)
+					})}
 
 					<Form reply>
 						<Form.TextArea onChange={this.onChange}/>
